@@ -4,13 +4,14 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QString>
 
 
 class GeocodeDataManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit GeocodeDataManager(QObject *parent = 0);
+    explicit GeocodeDataManager(QString _apiKey, QObject *parent = 0);
 
     void getCoordinates(const QString& address);
 
@@ -22,6 +23,7 @@ private slots:
     void replyFinished(QNetworkReply* reply);
 
 private:
+    QString apiKey;
     QNetworkAccessManager* m_pNetworkAccessManager;
 
 

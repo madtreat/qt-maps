@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QString>
 
 class Form;
 
@@ -21,6 +22,8 @@ public:
 private:
     Ui::MainWindow *ui;
     Form* m_pForm;
+    QString apiKey;
+    QString getAPIKey();
 };
 
 #endif // MAINWINDOW_H

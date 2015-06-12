@@ -34,7 +34,7 @@ class Form : public QWidget
     Q_OBJECT
 
 public:
-    explicit Form(QWidget *parent = 0);
+    explicit Form(QString _apiKey, QWidget *parent = 0);
     ~Form();
 
 
@@ -57,10 +57,11 @@ private slots:
 
 private:
     void getCoordinates(const QString& address);
-
+    QString getHTMLWithAPIKey(QString htmlFile);
 
 private:
     Ui::Form *ui;
+    QString apiKey;
     GeocodeDataManager m_geocodeDataManager;
     //markers list
     QList <SMarker*> m_markers;

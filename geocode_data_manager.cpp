@@ -4,30 +4,28 @@
 #include <QDebug>
 
 
-const QString apiKey = "YOUR_MAPS_API_KEY_HERE";
-
-GeocodeDataManager::GeocodeDataManager(QObject *parent) :
-    QObject(parent)
+GeocodeDataManager::GeocodeDataManager(QString _apiKey, QObject *parent) :
+    QObject(parent),
+    apiKey(_apiKey)
 {
     m_pNetworkAccessManager = new QNetworkAccessManager(this);
     connect(m_pNetworkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(replyFinished(QNetworkReply*)));
-
-
 }
 
 void GeocodeDataManager::getCoordinates(const QString& address)
 {
-    QString url = QString("http://maps.google.com/maps/geo?q=%1&key=%2&output=json&oe=utf8&sensor=false").arg(address).arg(apiKey);
+    QString url = QString("https://maps.googleapis.com/maps/api/geocode/json?q=%1&key=%2&output=json&oe=utf8&sensor=false").arg(address).arg(apiKey);
     m_pNetworkAccessManager->get(QNetworkRequest(QUrl(url)));
+    qDebug() << "Getting coordinates:\n" << url;
 }
 
 
 void GeocodeDataManager::replyFinished(QNetworkReply* reply)
 {
-//    QString json = reply->readAll();
-//    qDebug() << "Reply = " << json;
-//    qDebug() << "URL = " << reply->url();
-//    QString strUrl = reply->url().toString();
+    QString json = reply->readAll();
+    qDebug() << "Reply = " << json;
+    qDebug() << "URL = " << reply->url();
+    QString strUrl = reply->url().toString();
 
 //    QJson::Parser parser;
 
