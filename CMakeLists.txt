@@ -38,5 +38,4 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
    ${Qt5Gui_LIBRARIES}
    ${Qt5Network_LIBRARIES}
    ${Qt5WebKitWidgets_LIBRARIES}
-   qjson
 )

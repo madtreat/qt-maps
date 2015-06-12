@@ -19,7 +19,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Postal Address</string>
+        <string>Search Google Maps</string>
        </property>
       </widget>
      </item>
@@ -59,8 +59,8 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QWebView" name="webView">
-     <property name="url">
+    <widget class="QWebView" name="webView" native="true">
+     <property name="url" stdset="0">
       <url>
        <string>about:blank</string>
       </url>
