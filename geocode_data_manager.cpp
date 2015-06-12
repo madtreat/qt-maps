@@ -102,7 +102,7 @@ bool GeocodeDataManager::parseStatus(QString status)
 QGeoCoordinate GeocodeDataManager::parseGeoCoordinate(QJsonObject location)
 {
    double lat = location.value("lat").toDouble();
-   double lon = location.value("lon").toDouble();
+   double lon = location.value("lng").toDouble();
    return QGeoCoordinate(lat, lon);
 }
 

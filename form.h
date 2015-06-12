@@ -14,17 +14,17 @@ struct SMarker
 {
     SMarker()
     {
-        east = 0;
-        north = 0;
+        lat = 0;
+        lon = 0;
         caption = "";
     };
-    SMarker(double _east, double _north, QString _caption)
+    SMarker(double _lat, double _lon, QString _caption)
     {
-        east = _east; north = _north; caption = _caption;
+        lat = _lat; lon = _lon; caption = _caption;
     };
 
-    double east;
-    double north;
+    double lat;
+    double lon;
     QString caption;
 };
 
@@ -42,9 +42,9 @@ public:
 private slots:
     void goClicked();
 
-    void showCoordinates(double east, double north, bool saveMarker = true);
+    void showCoordinates(double lat, double lon, bool saveMarker = true);
     //set marker to map and save marker in markers list
-    void setMarker(double east, double north, QString caption);
+    void setMarker(double lat, double lon, QString caption);
     void errorOccured(const QString&);
 
 

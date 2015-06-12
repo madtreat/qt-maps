@@ -85,12 +85,12 @@ QString Form::getHTMLWithAPIKey(QString htmlFile)
    return modHTMLPath;
 }
 
-void Form::showCoordinates(double east, double north, bool saveMarker)
+void Form::showCoordinates(double lat, double lon, bool saveMarker)
 {
-   qDebug() << "Form, showCoordinates" << east << north;
+   qDebug() << "Form, showCoordinates" << lat << "," << lon;
    
    QString str =
-           QString("var newLoc = new google.maps.LatLng(%1, %2); ").arg(north).arg(east) +
+           QString("var newLoc = new google.maps.LatLng(%1, %2); ").arg(lat).arg(lon) +
            QString("map.setCenter(newLoc);") +
            QString("map.setZoom(%1);").arg(ui->zoomSpinBox->value());
    
@@ -99,10 +99,10 @@ void Form::showCoordinates(double east, double north, bool saveMarker)
    ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
    
    if (saveMarker)
-      setMarker(east, north, ui->lePostalAddress->text());
+      setMarker(lat, lon, ui->lePostalAddress->text());
 }
 
-void Form::setMarker(double east, double north, QString caption)
+void Form::setMarker(double lat, double lon, QString caption)
 {
    for (int i=0; i<m_markers.size(); i++)
    {
@@ -111,7 +111,7 @@ void Form::setMarker(double east, double north, QString caption)
    
    QString str =
            QString("var marker = new google.maps.Marker({") +
-           QString("position: new google.maps.LatLng(%1, %2),").arg(north).arg(east) +
+           QString("position: new google.maps.LatLng(%1, %2),").arg(lat).arg(lon) +
            QString("map: map,") +
            QString("title: %1").arg("\""+caption+"\"") +
            QString("});") +
@@ -120,7 +120,7 @@ void Form::setMarker(double east, double north, QString caption)
    ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
    
    
-   SMarker *_marker = new SMarker(east, north, caption);
+   SMarker *_marker = new SMarker(lat, lon, caption);
    m_markers.append(_marker);
    
    //adding capton to ListWidget
@@ -146,7 +146,7 @@ void Form::on_lwMarkers_currentRowChanged(int currentRow)
 {
    if (currentRow < 0) return;
    QString str =
-           QString("var newLoc = new google.maps.LatLng(%1, %2); ").arg(m_markers[currentRow]->north).arg(m_markers[currentRow]->east) +
+           QString("var newLoc = new google.maps.LatLng(%1, %2); ").arg(m_markers[currentRow]->lon).arg(m_markers[currentRow]->lat) +
            QString("map.setCenter(newLoc);");
    
    qDebug() << str;
@@ -171,8 +171,8 @@ void Form::on_pbRemoveMarker_clicked()
 
 void Form::on_zoomSpinBox_valueChanged(int arg1)
 {
-//    QString str =
-//            QString("map.setZoom(%1);").arg(arg1);
+    QString str =
+            QString("map.setZoom(%1);").arg(arg1);
 //    qDebug() << str;
-//    ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+    ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
 }
