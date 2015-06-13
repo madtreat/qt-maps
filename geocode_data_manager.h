@@ -1,3 +1,8 @@
+/*
+ * Manages data communications between the Google Maps API servers and this 
+ * application.
+ */
+
 #ifndef GEOCODE_DATA_MANAGER_H
 #define GEOCODE_DATA_MANAGER_H
 

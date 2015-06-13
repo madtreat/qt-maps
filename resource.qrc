@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/html">
-        <file>google_maps.html</file>
-    </qresource>
+   <qresource prefix="/html">
+      <file>config/google-maps.html</file>
+   </qresource>
 </RCC>

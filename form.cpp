@@ -1,5 +1,7 @@
 #include "form.h"
 #include "ui_form.h"
+#include "mapsettings.h"
+
 #include <QDebug>
 #include <QWebFrame>
 #include <QWebElement>
@@ -9,13 +11,14 @@
 // TODO: replace all exit(1) calls with something else so the app can continue without maps.
 
 
-Form::Form(QString _apiKey, QWidget *parent) :
+Form::Form(MapSettings* _settings, QWidget *parent) :
    QWidget(parent),
    ui(new Ui::Form),
-   apiKey(_apiKey),
-   m_geocodeDataManager(apiKey, this)
+   settings(_settings),
+   m_geocodeDataManager(settings->apiKey(), this)
 {
    ui->setupUi(this);
+   ui->zoomSpinBox->setValue(settings->zoom());
    connect(ui->goButton, SIGNAL(clicked()), this, SLOT(goClicked()));
    connect(ui->lePostalAddress, SIGNAL(returnPressed()), this, SLOT(goClicked()));
    
@@ -25,9 +28,7 @@ Form::Form(QString _apiKey, QWidget *parent) :
    QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
    ui->lePostalAddress->setText("");
    
-   // Edit the Google Maps API Key in the resource file to be valid.
-   QString htmlModPath = getHTMLWithAPIKey(":/html/google_maps.html");
-   ui->webView->setUrl(QUrl::fromLocalFile(htmlModPath));
+   ui->webView->setUrl(QUrl::fromLocalFile(settings->mapHtmlPath()));
 }
 
 Form::~Form()
@@ -35,55 +36,6 @@ Form::~Form()
    delete ui;
 }
 
-
-/*
- * Returns the path to a modified HTML file containing the Google Maps API Key 
- * instead of a placeholder.  If the modified file exists already in the config
- * directory, it is not regenerated.
- */
-QString Form::getHTMLWithAPIKey(QString htmlFile)
-{
-   // Get config file from [application root directory]/config
-   QString appRootDirStr = QCoreApplication::applicationDirPath();
-   QDir appRootDir(appRootDirStr);
-   appRootDir.cdUp();
-   QString configDir = appRootDir.absolutePath() + "/config";
-   
-   // Check to see if the modified HTML file has been previously generated
-   // and use it.
-   QString modHTMLPath = configDir + "/google-maps-with-api.html";
-   if (QFile::exists(modHTMLPath))
-   {
-      qDebug() << "Using previously generated HTML file with API Key at";
-      qDebug() << "  " << modHTMLPath;
-      return modHTMLPath;
-   }
-   
-   // If the modified HTML file has not been generated, create it now.
-   // Replace the filler string in the HTML and return the path
-   QFile origHTML(htmlFile);
-   if (!origHTML.open(QFile::ReadOnly | QFile::Text))
-   {
-      qDebug() << "Could not open original HTML file for reading";
-      exit(1);
-   }
-   
-   QFile modHTML(modHTMLPath);
-   if (!modHTML.open(QFile::WriteOnly | QFile::Text))
-   {
-      qDebug() << "Could not open modified HTML file for writing";
-      exit(1);
-   }
-   
-   QTextStream in(&origHTML);
-   QString origText = in.readAll();
-   QString modText = origText.replace("YOUR_API_KEY_HERE", apiKey);
-   
-   QTextStream out(&modHTML);
-   out << modText;
-   
-   return modHTMLPath;
-}
 
 void Form::showCoordinates(double lat, double lon, bool saveMarker)
 {

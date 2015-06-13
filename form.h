@@ -8,6 +8,7 @@ namespace Ui {
     class Form;
 }
 
+class MapSettings;
 
 //structure for save markers data
 struct SMarker
@@ -34,7 +35,7 @@ class Form : public QWidget
     Q_OBJECT
 
 public:
-    explicit Form(QString _apiKey, QWidget *parent = 0);
+    explicit Form(MapSettings* settings, QWidget *parent = 0);
     ~Form();
 
 
@@ -61,7 +62,7 @@ private:
 
 private:
     Ui::Form *ui;
-    QString apiKey;
+    MapSettings* settings;
     GeocodeDataManager m_geocodeDataManager;
     //markers list
     QList <SMarker*> m_markers;

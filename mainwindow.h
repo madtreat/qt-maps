@@ -5,6 +5,7 @@
 #include <QString>
 
 class Form;
+class MapSettings;
 
 namespace Ui {
     class MainWindow;
@@ -15,15 +16,14 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(MapSettings* _settings, QWidget* parent=0);
     ~MainWindow();
 
 
 private:
     Ui::MainWindow *ui;
     Form* m_pForm;
-    QString apiKey;
-    QString getAPIKey();
+    MapSettings* settings;
 };
 
 #endif // MAINWINDOW_H
