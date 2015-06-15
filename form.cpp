@@ -1,6 +1,7 @@
 #include "form.h"
 #include "ui_form.h"
 #include "mapsettings.h"
+#include "smarker.h"
 
 #include <QDebug>
 #include <QWebFrame>
@@ -23,7 +24,7 @@ Form::Form(MapSettings* _settings, QWidget *parent) :
    connect(ui->lePostalAddress, SIGNAL(returnPressed()), this, SLOT(goClicked()));
    
    connect(&m_geocodeDataManager, SIGNAL(coordinatesReady(double,double)), this, SLOT(showCoordinates(double,double)));
-   connect(&m_geocodeDataManager, SIGNAL(errorOccured(QString)), this, SLOT(errorOccured(QString)));
+   connect(&m_geocodeDataManager, SIGNAL(errorOccurred(QString)), this, SLOT(errorOccurred(QString)));
    
    QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
    ui->lePostalAddress->setText("");
@@ -87,7 +88,7 @@ void Form::goClicked()
 
 
 
-void Form::errorOccured(const QString& error)
+void Form::errorOccurred(const QString& error)
 {
    QMessageBox::warning(this, tr("Geocode Error"), error);
 }

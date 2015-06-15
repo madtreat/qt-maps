@@ -14,8 +14,7 @@
 #include <QDebug>
 
 MapSettings::MapSettings(QString _filename, QObject* _parent)
-:  QObject(_parent),
-   m_settingsFile(_filename)
+:  QObject(_parent)
 {
    m_userHomeDir = QDir::home().absolutePath();
    
@@ -25,6 +24,10 @@ MapSettings::MapSettings(QString _filename, QObject* _parent)
    
    appRoot.cdUp();
    m_configDir = appRoot.absolutePath() + "/config";
+   
+   if (m_settingsFile == "") {
+      m_settingsFile = m_configDir + "/google-maps.ini";
+   }
    
    if (!QFile::exists(m_settingsFile)) {
       qWarning() << "Warning: Settings file" << m_settingsFile << "does not exist. Exiting.";
@@ -91,7 +94,7 @@ void MapSettings::loadSettingsFile(QString _filename)
  */
 void MapSettings::saveSettingsFile(QString _filename)
 {
-   // make changes
+   // TODO: make this work
    
    settings->sync();
 }

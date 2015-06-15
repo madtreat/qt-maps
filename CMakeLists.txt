@@ -1,13 +1,13 @@
-PROJECT(qt-gmaps)
+project(qt-gmaps)
 
-SET(SOURCES
+set(SOURCES
    form.cpp
    geocode_data_manager.cpp
    mainwindow.cpp
    mapsettings.cpp
 )
 
-SET(HEADERS
+set(HEADERS
    form.h
    geocode_data_manager.h
    locationdata.h
@@ -15,24 +15,24 @@ SET(HEADERS
    mapsettings.h
 )
 
-SET(FORMS
+set(FORMS
    form.ui
    mainwindow.ui
 )
 
-SET(RESOURCES
+set(RESOURCES
    resource.qrc
 )
-QT5_ADD_RESOURCES(QRC ${RESOURCES})
-SET_SOURCE_FILES_PROPERTIES(${QRC} PROPERTIES GENERATED ON)
+qt5_add_resources(QRC ${RESOURCES})
+set_source_files_properties(${QRC} PROPERTIES GENERATED ON)
 
-ADD_LIBRARY(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME} SHARED
    ${SOURCES}
    ${HEADERS}
    ${QRC}
 )
 
-TARGET_LINK_LIBRARIES(${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME}
    ${Qt5Core_LIBRARIES}
    ${Qt5Widgets_LIBRARIES}
    ${Qt5Gui_LIBRARIES}
@@ -41,17 +41,10 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME}
 )
 
 # For testing purposes, it is easy to just add an additional executable to the build
-ADD_EXECUTABLE(gmaps-test
+add_executable(gmaps-test
    main.cpp
-   ${SOURCES}
-   ${HEADERS}
-   ${QRC}
 )
 
-TARGET_LINK_LIBRARIES(gmaps-test
-   ${Qt5Core_LIBRARIES}
-   ${Qt5Widgets_LIBRARIES}
-   ${Qt5Gui_LIBRARIES}
-   ${Qt5Network_LIBRARIES}
-   ${Qt5WebKitWidgets_LIBRARIES}
+target_link_libraries(gmaps-test
+   ${PROJECT_NAME}
 )

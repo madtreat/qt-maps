@@ -29,7 +29,7 @@ public:
    void getCoordinates(const QString& address);
 
 signals:
-   void errorOccured(const QString&);
+   void errorOccurred(const QString&);
    void coordinatesReady(double east, double north);
 
 private slots:

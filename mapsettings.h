@@ -16,7 +16,7 @@ class MapSettings : public QObject {
    Q_OBJECT
    
 public:
-   MapSettings(QString _filename, QObject* _parent=0);
+   MapSettings(QString _filename=QString(), QObject* _parent=0);
    MapSettings(const MapSettings& orig);
    virtual ~MapSettings();
    
