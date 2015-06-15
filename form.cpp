@@ -9,7 +9,6 @@
 #include <QMessageBox>
 #include <QFile>
 #include <QDir>
-// TODO: replace all exit(1) calls with something else so the app can continue without maps.
 
 
 Form::Form(MapSettings* _settings, QWidget *parent) :
@@ -76,7 +75,7 @@ void Form::setMarker(double lat, double lon, QString caption)
    SMarker *_marker = new SMarker(lat, lon, caption);
    m_markers.append(_marker);
    
-   //adding capton to ListWidget
+   //adding caption to ListWidget
    ui->lwMarkers->addItem(caption);
 }
 
@@ -115,9 +114,9 @@ void Form::on_pbRemoveMarker_clicked()
    qDebug() << str;
    ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
    
-   //deleteing caption from markers list
+   //deleting caption from markers list
    delete m_markers.takeAt(ui->lwMarkers->currentRow());
-   //deleteing caption from ListWidget
+   //deleting caption from ListWidget
    delete ui->lwMarkers->takeItem(ui->lwMarkers->currentRow());
    
 }

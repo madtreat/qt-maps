@@ -37,6 +37,7 @@ target_link_libraries(${PROJECT_NAME}
    ${Qt5Widgets_LIBRARIES}
    ${Qt5Gui_LIBRARIES}
    ${Qt5Network_LIBRARIES}
+   ${Qt5Positioning_LIBRARIES}
    ${Qt5WebKitWidgets_LIBRARIES}
 )
 
