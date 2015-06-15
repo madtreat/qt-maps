@@ -14,7 +14,8 @@
 #include <QDebug>
 
 MapSettings::MapSettings(QString _filename, QObject* _parent)
-:  QObject(_parent)
+:  QObject(_parent),
+   settings(NULL)
 {
    m_userHomeDir = QDir::home().absolutePath();
    
@@ -33,9 +34,10 @@ MapSettings::MapSettings(QString _filename, QObject* _parent)
       qWarning() << "Warning: Settings file" << m_settingsFile << "does not exist. Exiting.";
       exit(1);
    }
-   qDebug() << "Loaded settings file:\n" << m_settingsFile;
+   qDebug() << "Loading settings file:\n  " << m_settingsFile;
    
    loadSettingsFile(m_settingsFile);
+   qDebug() << "   Done loading maps settings.";
 }
 
 MapSettings::MapSettings(const MapSettings& orig)
@@ -53,8 +55,9 @@ MapSettings::~MapSettings()
 void MapSettings::loadSettingsFile(QString _filename)
 {
    // If the settings pointer already exists, delete it to start fresh on a new
-   // file, since this can be called multiple times in an application.
+   // file, since this can potentially be called multiple times in an application.
    if (settings) {
+      qDebug() << "Settings object already exists, re-creating it" << settings;
       delete settings;
    }
    settings = new QSettings(_filename, QSettings::IniFormat);
@@ -80,13 +83,24 @@ void MapSettings::loadSettingsFile(QString _filename)
    // Load map type
    m_mapType = settings->value("map_type", "ROADMAP").toString();
    
-   // Load extra JS file
-   m_extraJSPath = settings->value("extra_js_file").toString();
-   loadExtraJS();
-   
-   // Load map HTML file from compiled in resource
-   m_mapHtmlInPath = ":/html/config/google-maps.html";
-   loadMapHtml(); // must be called AFTER loadExtraJS() for valid JS data to be loaded
+   // Load map JS file
+   m_mapJSPath = settings->value("js_file").toString();
+   bool validJS = loadMapJS();
+   if (validJS) {
+      // Load map HTML file from compiled in resource
+      m_mapHtmlInPath = ":/html/config/google-maps.html";
+       // must be called AFTER loadExtraJS() for valid JS data to be loaded
+      bool validHtml = loadMapHtml();
+      if (validHtml) {
+         m_mapValid = true;
+      }
+      else {
+         m_mapValid = false;
+      }
+   }
+   else {
+      m_mapValid = false;
+   }
 }
 
 /*
@@ -100,42 +114,57 @@ void MapSettings::saveSettingsFile(QString _filename)
 }
 
 /*
- * 
+ * Returns valid JS: true or false
  */
-void MapSettings::loadExtraJS()
+bool MapSettings::loadMapJS()
 {
    // Load the settings
+   if (m_mapJSPath == "") {
+      return false;
+   }
+   qDebug() << "   Map JS File:";
+   
    // TODO: ensure properly works with "/path" and "~/path" and "path"
    //       read example settings.ini file
-   if (QFile::exists(m_extraJSPath)) {
-      QFile file(m_extraJSPath);
+   if (!m_mapJSPath.startsWith("/") && !m_mapJSPath.startsWith("~")) {
+      m_mapJSPath.prepend(m_configDir + "/");
+   }
+   qDebug() << "     " << m_mapJSPath;
+   
+   if (QFile::exists(m_mapJSPath)) {
+      QFile file(m_mapJSPath);
       if ( !file.open(QFile::ReadOnly | QFile::Text) ) {
-         qWarning() << "Warning: Unable to open Extra JS file, skipping.";
-         m_extraJSAvailable = false;
+         qWarning() << "Warning: Unable to open Map JS file, disabling maps.";
+         return false;
       }
       else {
          QTextStream in(&file);
-         m_extraJSData = in.readAll();
-         m_extraJSAvailable = true;
+         m_mapJSData = in.readAll();
+         return true;
       }
    }
    else {
-      qWarning() << "Warning: No Extra JS file provided, skipping.";
-      m_extraJSAvailable = false;
+      qWarning() << "Warning: No Map JS file provided, disabling maps.";
+      return false;
    }
 }
 
 /*
- * 
+ * Returns valid HTML: true or false
  */
-void MapSettings::loadMapHtml()
+bool MapSettings::loadMapHtml()
 {
    // Load the settings
+   if (m_mapJSData == "") {
+      qWarning() << "Warning: Map JS file was empty or invalid, disabling maps.";
+      return false;
+   }
+   
 //   if (QFile::exists(m_mapHtmlInPath)) {
       QFile file(m_mapHtmlInPath);
       if ( !file.open(QFile::ReadOnly | QFile::Text) ) {
          qWarning() << "Warning: Unable to open Map HTML file, disabling maps.";
-         m_mapHtmlValid = false;
+         return false;
       }
       else {
          QTextStream in(&file);
@@ -145,26 +174,28 @@ void MapSettings::loadMapHtml()
          QFile htmlFile(m_mapHtmlPath);
          if (!htmlFile.open(QFile::WriteOnly | QFile::Text)) {
             qWarning() << "Warning: Could not open Generated Map HTML file for writing";
-            m_mapHtmlValid = false;
+            return false;
          }
          else {
             // Replace all the tags with their actual values
+            // __API_KEY__ and __JS_CODE__ are directly in the HTML file,
+            // The other tags are in the mapJSData string.
             m_mapHtmlData = inText.replace("__API_KEY__", m_apiKey);
+            m_mapHtmlData = inText.replace("__JS_CODE__", m_mapJSData);
             m_mapHtmlData = inText.replace("__LAT__", QString::number(m_lat));
             m_mapHtmlData = inText.replace("__LON__", QString::number(m_lon));
             m_mapHtmlData = inText.replace("__ZOOM__", QString::number(m_zoom));
             m_mapHtmlData = inText.replace("__MAP_TYPE__", m_mapType);
-            m_mapHtmlData = inText.replace("__EXTRA_JS__", m_extraJSData);
          
             QTextStream out(&htmlFile);
             out << m_mapHtmlData;
             
-            m_mapHtmlValid = true;
+            return true;
          }
       }
 //   }
 //   else {
 //      qWarning() << "Warning: No Map HTML file provided, disabling maps.";
-//      m_mapHtmlValid = false;
+//      return false;
 //   }
 }

@@ -23,7 +23,7 @@ public:
    // If this is true, maps can be enabled in the application.
    // If false, there was probably a missing required setting.
    bool canEnableMaps()  const {
-      return m_apiKeyValid && m_mapHtmlValid;
+      return m_apiKeyValid && m_mapValid;
    }
    
    QString     configDir()    const { return m_configDir;      }
@@ -32,7 +32,7 @@ public:
    QString     settingsFile() const { return m_settingsFile;   }
    
    QString     apiKey()       const { return m_apiKey;         }
-   bool        isValidAPIKey()const { return m_apiKeyValid;   }
+   bool        isValidAPIKey()const { return m_apiKeyValid;    }
    
    double      lat()          const { return m_lat;            }
    double      lon()          const { return m_lon;            }
@@ -41,13 +41,24 @@ public:
    QString     mapType()      const { return m_mapType;        }
    QString     mapHtmlPath()  const { return m_mapHtmlPath;    }
    
-   QString     extraJSData()  const { return m_extraJSData;    }
+   QString     mapJSData()    const { return m_mapJSData;      }
    
    
 public slots:
    void loadSettingsFile(QString _filename);
    void saveSettingsFile(QString _filename);
+   
+   void setLat(double lat)       { m_lat = lat;       emit latChanged(m_lat);  }
+   void setLon(double lon)       { m_lon = lon;       emit lonChanged(m_lon);  }
+   void setZoom(int level)       { m_zoom = level;    emit zoomChanged(m_zoom);}
+   void setMapType(QString type) { m_mapType = type;  emit mapTypeChanged(m_mapType);}
 
+signals:
+   void latChanged(double lat);
+   void lonChanged(double lon);
+   void zoomChanged(int zoom);
+   void mapTypeChanged(QString type);
+   
 private:
    QSettings*  settings;
    QString     m_configDir;
@@ -64,19 +75,20 @@ private:
    int         m_zoom;        // zoom level
    
    QString     m_mapType;     // map type
+   
    QString     m_mapHtmlInPath;//map input HTML file
    QString     m_mapHtmlPath; // map generated HTML file
    QString     m_mapHtmlData; // map generated HTML file contents
-   bool        m_mapHtmlValid;// true if the file was provided
    
-   QString     m_extraJSPath; // extra JavaScript file for map overlays, etc.
-   QString     m_extraJSData; // extra JS file contents
-   bool        m_extraJSAvailable; // extra JS file is non-empty and can be used
+   QString     m_mapJSPath; // JavaScript file for map data and overlays
+   QString     m_mapJSData; // JS file contents
+   
+   bool        m_mapValid;// true if the HTML and JS files were provided
    
    
    // Private functions
-   void loadExtraJS();
-   void loadMapHtml();
+   bool loadMapJS();
+   bool loadMapHtml();
 };
 
 #endif	/* MAPSETTINGS_H */
