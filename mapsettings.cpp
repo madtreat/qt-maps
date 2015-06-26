@@ -83,6 +83,9 @@ void MapSettings::loadSettingsFile(QString _filename)
    // Load map type
    m_mapType = settings->value("map_type", "ROADMAP").toString();
    
+   // Load UI disable
+   m_mapDisableUI = settings->value("disable_map_ui", false).toBool();
+   
    // Load map JS file
    m_mapJSPath = settings->value("js_file").toString();
    bool validJS = loadMapJS();
@@ -186,6 +189,7 @@ bool MapSettings::loadMapHtml()
             m_mapHtmlData = inText.replace("__LON__", QString::number(m_lon));
             m_mapHtmlData = inText.replace("__ZOOM__", QString::number(m_zoom));
             m_mapHtmlData = inText.replace("__MAP_TYPE__", m_mapType);
+            m_mapHtmlData = inText.replace("__DISABLE_MAP_UI__", m_mapDisableUI ? "true" : "false");
          
             QTextStream out(&htmlFile);
             out << m_mapHtmlData;

@@ -42,6 +42,7 @@ public:
    QString     mapHtmlPath()  const { return m_mapHtmlPath;    }
    
    QString     mapJSData()    const { return m_mapJSData;      }
+   bool        mapDisableUI() const { return m_mapDisableUI;   }
    
    
 public slots:
@@ -82,6 +83,8 @@ private:
    
    QString     m_mapJSPath; // JavaScript file for map data and overlays
    QString     m_mapJSData; // JS file contents
+   
+   bool        m_mapDisableUI; // Disable Default Map UI
    
    bool        m_mapValid;// true if the HTML and JS files were provided
    
