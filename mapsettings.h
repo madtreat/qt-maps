@@ -16,7 +16,7 @@ class MapSettings : public QObject {
    Q_OBJECT
    
 public:
-   MapSettings(QString _filename=QString(), QObject* _parent=0);
+   MapSettings(QString _filename, QObject* _parent=0);
    MapSettings(const MapSettings& orig);
    virtual ~MapSettings();
    
@@ -68,6 +68,7 @@ private:
    QString     m_settingsFile;
    
    // Settings values
+   QString     m_mapProvider; // Map provider
    QString     m_apiKey;      // Google Maps API Key
    bool        m_apiKeyValid; // Google Maps API Key was provided and valid
    

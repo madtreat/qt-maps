@@ -1,5 +1,6 @@
 <RCC>
    <qresource prefix="/html">
       <file>config/google-maps.html</file>
+      <file>config/openlayers.html</file>
    </qresource>
 </RCC>

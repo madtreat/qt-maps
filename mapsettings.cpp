@@ -27,7 +27,7 @@ MapSettings::MapSettings(QString _filename, QObject* _parent)
    m_configDir = appRoot.absolutePath() + "/config";
    
    if (m_settingsFile == "") {
-      m_settingsFile = m_configDir + "/google-maps.ini";
+      m_settingsFile = m_configDir + "/" + _filename;
    }
    
    if (!QFile::exists(m_settingsFile)) {
@@ -62,9 +62,12 @@ void MapSettings::loadSettingsFile(QString _filename)
    }
    settings = new QSettings(_filename, QSettings::IniFormat);
    
+   // Load the Map Provider
+   m_mapProvider = settings->value("map_provider").toString();
+   
    // Load the API_KEY
    m_apiKey = settings->value("api_key", "failed").toString();
-   if ( m_apiKey == "failed" || m_apiKey.isEmpty() ) {
+   if ( m_mapProvider == "google" && ( m_apiKey == "failed" || m_apiKey.isEmpty() ) ) {
       qWarning() << "Warning: No Google Maps API Key provided. Exiting.";
       m_apiKeyValid = false;
    }
@@ -91,7 +94,13 @@ void MapSettings::loadSettingsFile(QString _filename)
    bool validJS = loadMapJS();
    if (validJS) {
       // Load map HTML file from compiled in resource
-      m_mapHtmlInPath = ":/html/config/google-maps.html";
+      if (m_mapProvider == "google") {
+         m_mapHtmlInPath = ":/html/config/google-maps.html";
+      }
+      else {
+         m_mapHtmlInPath = ":/html/config/openlayers.html";
+      }
+      
        // must be called AFTER loadExtraJS() for valid JS data to be loaded
       bool validHtml = loadMapHtml();
       if (validHtml) {
@@ -173,7 +182,7 @@ bool MapSettings::loadMapHtml()
          QTextStream in(&file);
          QString inText = in.readAll();
          
-         m_mapHtmlPath = m_configDir + "/google-maps-gen.html";
+         m_mapHtmlPath = m_configDir + "/map-gen.html";
          QFile htmlFile(m_mapHtmlPath);
          if (!htmlFile.open(QFile::WriteOnly | QFile::Text)) {
             qWarning() << "Warning: Could not open Generated Map HTML file for writing";

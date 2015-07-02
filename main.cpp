@@ -15,13 +15,7 @@ int main(int argc, char *argv[])
 {
    QApplication a(argc, argv);
    
-   QString appRootDirStr = QCoreApplication::applicationDirPath();
-   QDir appRootDir(appRootDirStr);
-   appRootDir.cdUp();
-   QString configDir = appRootDir.absolutePath() + "/config";
-   QString settingsFilename = configDir + "/google-maps.ini";
-   
-   MapSettings* settings = new MapSettings(settingsFilename);
+   MapSettings* settings = new MapSettings("google-maps.ini");
    
    MainWindow w(settings);
    w.show();
