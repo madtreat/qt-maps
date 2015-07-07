@@ -82,6 +82,10 @@ function init() {
    });
 }
 
+function resize() {
+   setTimeout( function() { map.updateSize(); }, 200);
+}
+
 function panTo(lat, lon) {
    view.setCenter(getCoords(lat, lon));
 }

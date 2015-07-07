@@ -12,6 +12,10 @@ function initialize() {
 }
 google.maps.event.addDomListener(window, 'load', initialize);
 
+function resize() {
+   // Resize the map
+}
+
 function panTo(lat, lon) {
    map.panTo(new google.maps.LatLng(lat, lon), 500);
 }
