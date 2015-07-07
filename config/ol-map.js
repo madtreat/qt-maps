@@ -4,11 +4,11 @@ var hybLayer;
 var osmLayer;
 var map;
 
-var acIDs = [];
-var acFeatures = [];
-var acIconLayers = []; // one icon per aircraft
-var acElements = []; // one element per aircraft
-var acPopupOverlays = []; // one popup overlay per aircraft
+var iconIDs = [];
+var iconFeatures = [];
+var iconLayers = []; // one layer per icon
+var iconElements = []; // one element per icon
+var iconPopupOverlays = []; // one popup overlay per icon
 
 function getCoords(lat, lon) {
    return ol.proj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857');
@@ -46,15 +46,12 @@ function init() {
          return feature;
       });
       if (feature) {
-         var id = feature.get('id') - 1; // zero based, but ac 0 is not shown, so -1
+         var id = feature.get('id') - 1; // zero based, but icon 0 is not shown, so -1
          var geometry = feature.getGeometry();
          var coord = geometry.getCoordinates();
-         acPopupOverlays[id].setPosition(coord);
-         var element = acElements[id];
+         iconPopupOverlays[id].setPosition(coord);
+         var element = iconElements[id];
          var content = 'id : '+ feature.get('id') + '\n';
-         content += 'alt: ' + feature.get('alt') + '\n';
-         content += 'rng: ' + feature.get('rng') + '\n';
-         content += 'ber: ' + feature.get('ber');
          $(element).popover({
             'placement': 'right',
             'html': true,
@@ -62,7 +59,7 @@ function init() {
          });
          $(element).popover('show');
       } else {
-         $(acElements).each(function(index) {
+         $(iconElements).each(function(index) {
             $(this).popover('destroy');
          });
       }
@@ -71,7 +68,7 @@ function init() {
    // change mouse cursor when over marker
    map.on('pointermove', function(e) {
       if (e.dragging) {
-         $(acElements).each(function(index) {
+         $(iconElements).each(function(index) {
             $(this).popover('destroy');
          });
          return;
@@ -110,31 +107,25 @@ function addSatLayer() {
    hybLayer.set('visible', true);
 }
 
-function updateAircraft(id, lat, lon, rng, ber, alt) {
-   var feature = acFeatures[id-1];
+function updateIcon(id, lat, lon) {
+   var feature = iconFeatures[id-1];
    if (feature) {
       feature.setGeometry(new ol.geom.Point(getCoords(lat, lon)));
       feature.set('id', id);
-      feature.set('rng', rng);
-      feature.set('ber', ber);
-      feature.set('alt', alt);
       
-      acIconLayers[id-1].refresh({force:true});
+      iconLayers[id-1].refresh({force:true});
    }
 }
 
-function addNewAircraft(id, lat, lon, rng, ber, alt) {
-   if (acIDs.indexOf(id) >= 0) {
-      updateAircraft(id, lat, lon, rng, ber, alt);
+function addNewIcon(id, lat, lon) {
+   if (iconIDs.indexOf(id) >= 0) {
+      updateIcon(id, lat, lon);
    }
    else {
-      acIDs.push(id);
+      iconIDs.push(id);
       var iconFeature = new ol.Feature({
          geometry: new ol.geom.Point(getCoords(lat, lon)),
-         id: id,
-         rng: rng,
-         ber: ber,
-         alt: alt
+         id: id
       });
       var iconStyle = new ol.style.Style({
          image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
@@ -146,7 +137,7 @@ function addNewAircraft(id, lat, lon, rng, ber, alt) {
          }))
       });
       iconFeature.setStyle(iconStyle);
-      acFeatures.push(iconFeature);
+      iconFeatures.push(iconFeature);
       
       var vectorSource = new ol.source.Vector({
          features: [iconFeature]
@@ -155,16 +146,16 @@ function addNewAircraft(id, lat, lon, rng, ber, alt) {
          source: vectorSource
       });
       map.addLayer(vectorLayer);
-      acIconLayers.push(vectorLayer); // so we can access it later
+      iconLayers.push(vectorLayer); // so we can iconcess it later
       
       var element = document.getElementById('popup' + id);
-      acElements.push(element);
+      iconElements.push(element);
       var popup = new ol.Overlay({
          element: element,
          positioning: 'bottom-center',
          stopEvent: false
       });
       map.addOverlay(popup);
-      acPopupOverlays.push(popup);
+      iconPopupOverlays.push(popup);
    }
 }
