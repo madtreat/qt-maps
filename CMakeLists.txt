@@ -19,6 +19,7 @@ set(FORMS
    form.ui
    mainwindow.ui
 )
+qt5_wrap_ui(FORMS_WRAPPED ${FORMS})
 
 set(RESOURCES
    resource.qrc
@@ -30,6 +31,7 @@ add_library(${PROJECT_NAME} SHARED
    ${SOURCES}
    ${HEADERS}
    ${QRC}
+   ${FORMS_WRAPPED}
 )
 
 target_link_libraries(${PROJECT_NAME}
