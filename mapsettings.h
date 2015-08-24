@@ -12,6 +12,9 @@
 #include <QSettings>
 #include <QString>
 
+#include "qtmapsconsts.h"
+
+
 class MapSettings : public QObject {
    Q_OBJECT
    
@@ -43,6 +46,9 @@ public:
    
    QString     mapJSData()    const { return m_mapJSData;      }
    bool        mapDisableUI() const { return m_mapDisableUI;   }
+
+   MapOrientation mapOrientation() const { return m_mapOrientation; }
+   void        setMapOrientation(MapOrientation mo) { m_mapOrientation = mo; }
    
    
 public slots:
@@ -88,6 +94,9 @@ private:
    bool        m_mapDisableUI; // Disable Default Map UI
    
    bool        m_mapValid;// true if the HTML and JS files were provided
+
+   // "map" group
+   MapOrientation m_mapOrientation;
    
    
    // Private functions

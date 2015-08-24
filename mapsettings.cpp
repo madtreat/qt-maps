@@ -113,6 +113,19 @@ void MapSettings::loadSettingsFile(QString _filename)
    else {
       m_mapValid = false;
    }
+
+   // Load Map Orientation
+   QString os = settings->value("map_orientation").toString();
+   if (os == "north_up") {
+      m_mapOrientation = NORTH_UP;
+   }
+   else if (os == "track_up") {
+      m_mapOrientation = TRACK_UP;
+   }
+   else {
+      qWarning() << "Warning: invalid map orientation, defaulting to NORTH_UP";
+      m_mapOrientation = NORTH_UP;
+   }
 }
 
 /*
