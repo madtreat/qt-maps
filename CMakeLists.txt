@@ -51,3 +51,7 @@ add_executable(gmaps-test
 target_link_libraries(gmaps-test
    ${PROJECT_NAME}
 )
+
+install(TARGETS ${PROJECT_NAME} DESTINATION lib)
+install(TARGETS gmaps-test DESTINATION bin)
+
