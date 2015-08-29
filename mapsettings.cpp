@@ -26,12 +26,18 @@ MapSettings::MapSettings(QString _filename, QObject* _parent)
    appRoot.cdUp();
    m_configDir = appRoot.absolutePath() + "/config";
    
-   if (m_settingsFile == "") {
+   // If _filename starts with a "/", assume it is a full path
+   if (_filename.startsWith("/")) {
+      m_settingsFile = _filename;
+      m_configDir = QFileInfo(m_settingsFile).absolutePath();
+   }
+   // Otherwise, add it to the default m_configDir
+   else {
       m_settingsFile = m_configDir + "/" + _filename;
    }
    
    if (!QFile::exists(m_settingsFile)) {
-      qWarning() << "Warning: Settings file" << m_settingsFile << "does not exist. Exiting.";
+      qWarning() << "Warning: Map settings file" << m_settingsFile << "does not exist. Exiting.";
       exit(1);
    }
    qDebug() << "Loading settings file:\n  " << m_settingsFile;
