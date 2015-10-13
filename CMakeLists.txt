@@ -1,5 +1,7 @@
 project(qt-gmaps)
 
+add_subdirectory(config)
+
 set(SOURCES
    form.cpp
    geocode_data_manager.cpp
