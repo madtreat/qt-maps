@@ -42,7 +42,8 @@ target_link_libraries(${PROJECT_NAME}
    ${Qt5Gui_LIBRARIES}
    ${Qt5Network_LIBRARIES}
    ${Qt5Positioning_LIBRARIES}
-   ${Qt5WebKitWidgets_LIBRARIES}
+   ${Qt5WebEngine_LIBRARIES}
+   ${Qt5WebEngineWidgets_LIBRARIES}
 )
 
 # For testing purposes, it is easy to just add an additional executable to the build

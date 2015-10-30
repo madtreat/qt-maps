@@ -4,8 +4,9 @@
 #include "smarker.h"
 
 #include <QDebug>
-#include <QWebFrame>
-#include <QWebElement>
+//#include <QWebEngineFrame>
+//#include <QWebEngineElement>
+#include <QWebEngineSettings>
 #include <QMessageBox>
 #include <QFile>
 #include <QDir>
@@ -25,7 +26,7 @@ Form::Form(MapSettings* _settings, QWidget *parent) :
    connect(&m_geocodeDataManager, SIGNAL(coordinatesReady(double,double)), this, SLOT(showCoordinates(double,double)));
    connect(&m_geocodeDataManager, SIGNAL(errorOccurred(QString)), this, SLOT(errorOccurred(QString)));
    
-   QWebSettings::globalSettings()->setAttribute(QWebSettings::PluginsEnabled, true);
+   QWebEngineSettings::globalSettings()->setAttribute(QWebEngineSettings::JavascriptEnabled, true);
    ui->lePostalAddress->setText("");
    
    ui->webView->setUrl(QUrl::fromLocalFile(settings->mapHtmlPath()));
@@ -48,7 +49,10 @@ void Form::showCoordinates(double lat, double lon, bool saveMarker)
    
    qDebug() << str;
    
-   ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+   // Qt Pre-5.5.1:
+   //ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+   // Qt Post-5.5.1:
+   ui->webView->page()->runJavaScript(str);
    
    if (saveMarker)
       setMarker(lat, lon, ui->lePostalAddress->text());
@@ -69,7 +73,8 @@ void Form::setMarker(double lat, double lon, QString caption)
            QString("});") +
            QString("markers.push(marker);");
    qDebug() << str;
-   ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+   //ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+   ui->webView->page()->runJavaScript(str); // Qt 5.5.1+
    
    
    SMarker *_marker = new SMarker(lat, lon, caption);
@@ -103,7 +108,8 @@ void Form::on_lwMarkers_currentRowChanged(int currentRow)
    
    qDebug() << str;
    
-   ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+   //ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+   ui->webView->page()->runJavaScript(str); // Qt 5.5.1+
 }
 
 void Form::on_pbRemoveMarker_clicked()
@@ -112,7 +118,8 @@ void Form::on_pbRemoveMarker_clicked()
    
    QString str = QString("markers[%1].setMap(null); markers.splice(%1, 1);").arg(ui->lwMarkers->currentRow());
    qDebug() << str;
-   ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+   //ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+   ui->webView->page()->runJavaScript(str); // Qt 5.5.1+
    
    //deleting caption from markers list
    delete m_markers.takeAt(ui->lwMarkers->currentRow());
@@ -126,5 +133,6 @@ void Form::on_zoomSpinBox_valueChanged(int arg1)
     QString str =
             QString("map.setZoom(%1);").arg(arg1);
 //    qDebug() << str;
-    ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+    //ui->webView->page()->currentFrame()->documentElement().evaluateJavaScript(str);
+   ui->webView->page()->runJavaScript(str); // Qt 5.5.1+
 }
