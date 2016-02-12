@@ -48,7 +48,10 @@ public:
    bool        mapDisableUI() const { return m_mapDisableUI;   }
 
    MapOrientation mapOrientation() const { return m_mapOrientation; }
-   void        setMapOrientation(MapOrientation mo) { m_mapOrientation = mo; }
+   void        setMapOrientation(MapOrientation mo) {
+      m_mapOrientation = mo;
+      emit mapOrientationChanged(mo);
+   }
    
    
 public slots:
@@ -65,6 +68,7 @@ signals:
    void lonChanged(double lon);
    void zoomChanged(int zoom);
    void mapTypeChanged(QString type);
+   void mapOrientationChanged(MapOrientation mo);
    
 private:
    QSettings*  settings;
