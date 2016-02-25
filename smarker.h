@@ -29,5 +29,5 @@ struct SMarker
     QString caption;
 };
 
-#endif	/* SMARKER_H */
+#endif  // SMARKER_H
 

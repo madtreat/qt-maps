@@ -7,3 +7,5 @@ This repo was forked from [https://github.com/YuTinCH/qt-google-map](https://git
 This project now works with [OpenLayers.org](http://openlayers.org) maps as well, which I needed to use for the encapsulating project instead of Google maps.  That project required the ability to rotate the map, which Google has so far not provided in its JS API.
 
 NOTE: this project will currently not compile on its own.  This may change in the future, but for now, I only need it in an already-established cmake project.
+
+This repo is being deprecated as of 2016-02-25 as I migrate the useful code to its own VSCL map repo to allow spanning of multiple projects.
